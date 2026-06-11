@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self' data: blob:; child-src 'none'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; worker-src 'self';"/>
+      content="default-src 'self' data: blob:; child-src https://www.roiify.net; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.roiify.net; worker-src 'self'; connect-src 'self' data: blob: https://www.roiify.net; img-src 'self' data: blob: https:;"/>
   <title>Dream Home Merge Design</title>
   <style type="text/css">
     * {
@@ -67,6 +67,21 @@
       z-index: 50;
       text-shadow: 1px 1px 1px #565656;
     }
+
+    #roiify-banner {
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      min-height: 80px;
+      z-index: 2000;
+      /* 未填充时透传点击，避免空白条挡住游戏底部操作 */
+      pointer-events: none;
+    }
+
+    #roiify-banner * {
+      pointer-events: auto;
+    }
   </style>
 </head>
 <body>
@@ -87,5 +102,27 @@
 <script type="text/javascript" src="./output/main-9fede46b.js?v=1713235198794"></script>
 <script type="text/javascript" src="./output/main-d91a9049.js?v=1713235198794"></script>
 <!-- AutoFinish -->
+<!-- Roiify banner 广告位 -->
+<div id="roiify-banner" data-roiify-placement data-roiify-format="banner"></div>
+<script async src="https://www.roiify.net/sdk/roiify-ads.js"></script>
+<script>
+window.addEventListener('load', function () {
+  fetch('./site-config.json')
+    .then(function (res) { return res.json(); })
+    .then(function (cfg) {
+      if (!cfg.bannerPlacementId || cfg.bannerPlacementId.indexOf('plc_xxxxx') === 0) {
+        console.warn('[Roiify] bannerPlacementId 未配置，跳过广告展示');
+        return;
+      }
+      RoiifyAds.show(cfg.bannerPlacementId, '[data-roiify-placement]', {
+        theme: 'dark',
+        format: 'banner',
+      });
+    })
+    .catch(function (err) {
+      console.warn('[Roiify] 读取 site-config.json 失败', err);
+    });
+});
+</script>
 </body>
 </html>
